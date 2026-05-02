@@ -1,0 +1,46 @@
+package com.klef.fsad.exam;
+
+import org.hibernate.*;
+import org.hibernate.cfg.Configuration;
+
+public class ClientDemo 
+{
+    public static void main(String[] args) 
+    {
+        Configuration cfg = new Configuration();
+        cfg.configure("hibernate.cfg.xml");
+
+        SessionFactory sf = cfg.buildSessionFactory();
+        Session session = sf.openSession();
+        Transaction tx = session.beginTransaction();
+
+        // 1. INSERT RECORD
+        Hospital h = new Hospital();
+        h.setName("Apollo Hospital");
+        h.setDescription("Multi-speciality hospital");
+        h.setDate("2026-05-02");
+        h.setStatus("Active");
+
+        session.save(h);
+        tx.commit();
+
+        System.out.println("Record Inserted Successfully");
+
+        // 2. FETCH RECORD BY ID
+        Session session2 = sf.openSession();
+        Hospital h2 = session2.get(Hospital.class, h.getId());
+
+        if(h2 != null) {
+            System.out.println("ID: " + h2.getId());
+            System.out.println("Name: " + h2.getName());
+            System.out.println("Description: " + h2.getDescription());
+            System.out.println("Date: " + h2.getDate());
+            System.out.println("Status: " + h2.getStatus());
+        } else {
+            System.out.println("Record Not Found");
+        }
+
+        session2.close();
+        sf.close();
+    }
+}
